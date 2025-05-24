@@ -1,9 +1,10 @@
 "use client"
 
-import { FileText, Globe, FileSpreadsheet, FileJson, Loader2 } from "lucide-react"
+import { FileText, Globe, FileSpreadsheet, FileJson, Loader2, FileIcon as FilePdf } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { ImageMetadata } from "@/types/image-metadata"
 import { generateWord } from "@/lib/export/word"
+import { generatePDF } from "@/lib/export/pdf"
 import { generateKML } from "@/lib/export/kml"
 import { generateExcel } from "@/lib/export/excel"
 import { generateJSON } from "@/lib/export/json"
@@ -53,6 +54,19 @@ export function ActionButtons({ imageMetadataList, setImageMetadataList }: Actio
               <FileText className="mr-2 h-4 w-4" />
             )}
             Gerar Word
+          </Button>
+
+          <Button
+            onClick={() => handleExport("pdf", () => generatePDF(imageMetadataList))}
+            disabled={isExporting !== null}
+            className="bg-error hover:bg-error/90 text-white"
+          >
+            {isExporting === "pdf" ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <FilePdf className="mr-2 h-4 w-4" />
+            )}
+            Gerar PDF
           </Button>
 
           <Button

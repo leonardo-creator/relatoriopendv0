@@ -2,208 +2,185 @@ import type { ImageMetadata } from "@/types/image-metadata"
 import { resizeImage } from "@/lib/image-utils"
 import { calculateUTM } from "@/lib/coordinates"
 
+/**
+ * Gera um relatório em formato DOCX que funciona em todas as plataformas
+ * Mantém o formato original mas com implementação mais robusta
+ */
 export async function generateWord(imageMetadataList: ImageMetadata[]) {
-  // Carregar a biblioteca dinamicamente
-  await loadHtmlDocxScript()
+  try {
+    // Ordenar por status
+    const sortedList = [...imageMetadataList].sort((a, b) => {
+      const order = { Atrasado: 1, Pendente: 2, Concluido: 3 }
+      return order[a.status] - order[b.status]
+    })
 
-  // Ordenar por status
-  const sortedList = [...imageMetadataList].sort((a, b) => {
-    const order = { Atrasado: 1, Pendente: 2, Concluido: 3 }
-    return order[a.status] - order[b.status]
-  })
+    // Criar o documento HTML no formato original
+    const htmlContent = await createHtmlReport(sortedList)
 
-  // Criar o documento com estilo otimizado para mobile
+    // Converter para DOCX usando uma abordagem mais robusta
+    await convertAndDownload(htmlContent)
+  } catch (error) {
+    console.error("Erro ao gerar relatório:", error)
+    alert("Ocorreu um erro ao gerar o relatório. Tente novamente ou use outro formato de exportação.")
+  }
+}
+
+/**
+ * Cria o conteúdo HTML do relatório mantendo o formato original
+ */
+async function createHtmlReport(items: ImageMetadata[]): Promise<string> {
+  // Criar um container para o conteúdo
   const container = document.createElement("div")
 
-  // Adicionar estilos globais para melhorar a legibilidade em dispositivos móveis
-  const style = document.createElement("style")
-  style.textContent = `
-    body {
-      font-family: Arial, sans-serif;
-      font-size: 14pt;
-      line-height: 1.5;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      font-size: 18pt;
-      color: #110043;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .item {
-      page-break-inside: avoid;
-      margin-bottom: 30px;
-      border: 1px solid #d4d4d8;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .item-header {
-      background-color: #f1f5f9;
-      padding: 10px;
-      font-weight: bold;
-      font-size: 16pt;
-      color: #110043;
-    }
-    .item-content {
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-    }
-    .item-image {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .item-image img {
-      max-width: 100%;
-      height: auto;
-      max-height: 200px;
-    }
-    .item-details {
-      font-size: 14pt;
-    }
-    .status-pendente {
-      color: #42eedc;
-    }
-    .status-concluido {
-      color: #a2ff00;
-    }
-    .status-atrasado {
-      color: #ff3f19;
-    }
-    .label {
-      font-weight: bold;
-      margin-right: 5px;
-    }
-    .value {
-      margin-bottom: 8px;
-    }
-  `
-  container.appendChild(style)
+  // Criar a tag meta para definir a codificação UTF-8
+  const metaCharset = document.createElement("meta")
+  metaCharset.setAttribute("charset", "UTF-8")
+  container.appendChild(metaCharset)
 
-  // Adicionar título
-  const title = document.createElement("h1")
-  title.textContent = "Relatório de Monitoramento"
-  container.appendChild(title)
+  // Criar uma tabela para conter as imagens e informações
+  const table = document.createElement("table")
+  table.style.width = "100%" // Ajustar conforme necessário
 
-  // Processar cada imagem como um item individual (não usar tabela)
-  await Promise.all(
-    sortedList.map(async (image, index) => {
-      const item = document.createElement("div")
-      item.className = "item"
+  // Adicionar a tabela ao container
+  container.appendChild(table)
 
-      // Cabeçalho do item com o nome do arquivo
-      const header = document.createElement("div")
-      header.className = "item-header"
-      header.textContent = `${index + 1}. ${image.name}`
-      item.appendChild(header)
+  // Processar cada item de metadados de imagem
+  for (const image of items) {
+    const row = table.insertRow()
 
-      // Conteúdo do item
-      const content = document.createElement("div")
-      content.className = "item-content"
+    // Criar a primeira célula para imagens
+    const imgCell = row.insertCell()
+    const imgElement = document.createElement("img")
 
-      // Imagem
-      const imageContainer = document.createElement("div")
-      imageContainer.className = "item-image"
+    // Redimensionar a imagem e definir a fonte
+    const resizedImageSrc = await resizeImage(image.thumbnail, 300, 200)
+    imgElement.src = resizedImageSrc
+    imgElement.style.height = "10px" // Mantendo o estilo original
+    imgCell.appendChild(imgElement)
 
-      const imgElement = document.createElement("img")
-      // Redimensionar para um tamanho menor para melhor visualização em dispositivos móveis
-      const resizedImageSrc = await resizeImage(image.thumbnail, 400, 300)
-      imgElement.src = resizedImageSrc
-      imgElement.alt = image.name
-      imageContainer.appendChild(imgElement)
-      content.appendChild(imageContainer)
+    // Criar a segunda célula para informações
+    const infoCell = row.insertCell()
+    const utmCoords = calculateUTM(image.Latitude, image.Longitude)
 
-      // Detalhes
-      const details = document.createElement("div")
-      details.className = "item-details"
+    infoCell.innerHTML = toUTF8(
+      `<strong>Título:</strong> ${image.name}<br>` +
+        `<strong>Data/hora:</strong> ${image.date}<br>` +
+        `<strong>Status:</strong> ${image.status}<br>` +
+        `<strong>Detalhes:</strong> ${image.description}<br>` +
+        `<strong>Coordenadas UTM:</strong> ${utmCoords}<br>` +
+        `<strong>GPS:</strong> ${image.Latitude}, ${image.Longitude}<br>` +
+        `<strong>Previsão:</strong> ${image.predictionDate}`,
+    )
+  }
 
-      // Status com cor
-      const statusClass = `status-${image.status.toLowerCase()}`
-      details.innerHTML += `
-        <div>
-          <span class="label">Status:</span>
-          <span class="value ${statusClass}">${image.status}</span>
-        </div>
-      `
-
-      // Outros detalhes
-      const utmCoords = calculateUTM(image.Latitude, image.Longitude)
-      details.innerHTML += `
-        <div><span class="label">Data/hora:</span> <span class="value">${image.date}</span></div>
-        <div><span class="label">Descrição:</span> <span class="value">${image.description || "Não informada"}</span></div>
-        <div><span class="label">Previsão:</span> <span class="value">${formatDate(image.predictionDate)}</span></div>
-        <div><span class="label">Coordenadas UTM:</span> <span class="value">${utmCoords}</span></div>
-        <div><span class="label">GPS:</span> <span class="value">${formatCoordinates(image.Latitude, image.Longitude)}</span></div>
-      `
-
-      content.appendChild(details)
-      item.appendChild(content)
-      container.appendChild(item)
-    }),
+  // Após processar todas imagens
+  const content = decodeURIComponent(
+    escape("<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body>" + table.outerHTML + "</body></html>"),
   )
 
-  // Criar o conteúdo HTML completo
-  const content = `<!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Relatório de Monitoramento</title>
-    </head>
-    <body>
-      ${container.innerHTML}
-    </body>
-  </html>`
+  return content
+}
 
+/**
+ * Converte string para UTF-8 (mantendo a função original)
+ */
+function toUTF8(str: string): string {
+  return unescape(encodeURIComponent(str))
+}
+
+/**
+ * Converte o HTML para DOCX e inicia o download
+ * Implementação robusta com fallbacks
+ */
+async function convertAndDownload(htmlContent: string) {
   try {
-    // Verificar se htmlDocx está disponível
-    if (typeof window.htmlDocx === "undefined") {
-      throw new Error("A biblioteca html-docx não está disponível")
+    // Primeiro, tenta usar a biblioteca html-docx-js se disponível
+    if (await isHtmlDocxAvailable()) {
+      const blob = await convertWithHtmlDocx(htmlContent)
+      downloadBlob(blob, `relatorio_${formatDateForFilename(new Date())}.docx`)
+      return
     }
 
-    const converted = window.htmlDocx.asBlob(content)
+    // Se html-docx-js não estiver disponível, oferece alternativa
+    const confirmed = confirm(
+      "A biblioteca para conversão para Word não está disponível. " +
+        "Deseja baixar o relatório em formato HTML? " +
+        "(Você pode abrir este arquivo no Word ou outro editor de texto)",
+    )
 
-    const link = document.createElement("a")
-    link.href = URL.createObjectURL(converted)
-    link.download = `relatorio_${new Date().toISOString().split("T")[0]}.docx`
-    link.click()
+    if (confirmed) {
+      // Fallback: Baixar como HTML
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" })
+      downloadBlob(blob, `relatorio_${formatDateForFilename(new Date())}.html`)
+    }
   } catch (error) {
-    console.error("Erro ao gerar Word:", error)
-    alert("Erro ao gerar o arquivo Word. Verifique o console para mais detalhes.")
+    console.error("Erro na conversão:", error)
+
+    // Último recurso: oferecer download como HTML
+    const confirmed = confirm(
+      "Ocorreu um erro ao gerar o documento Word. " +
+        "Deseja baixar o relatório em formato HTML? " +
+        "(Você pode abrir este arquivo no Word ou outro editor de texto)",
+    )
+
+    if (confirmed) {
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" })
+      downloadBlob(blob, `relatorio_${formatDateForFilename(new Date())}.html`)
+    }
   }
 }
 
-// Função para formatar data de forma mais legível
-function formatDate(dateString: string): string {
-  if (!dateString) return "Não definida"
+/**
+ * Verifica se a biblioteca html-docx-js está disponível
+ */
+async function isHtmlDocxAvailable(): Promise<boolean> {
+  if (typeof window.htmlDocx !== "undefined") {
+    return true
+  }
 
   try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
-  } catch (e) {
-    return dateString
+    // Tenta carregar a biblioteca
+    await loadHtmlDocxScript()
+    return typeof window.htmlDocx !== "undefined"
+  } catch (error) {
+    console.warn("Não foi possível carregar html-docx-js:", error)
+    return false
   }
 }
 
-// Função para formatar coordenadas de forma mais legível
-function formatCoordinates(lat: number | string, lng: number | string): string {
-  if (lat === "N/A" || lng === "N/A") return "Não disponível"
-
-  try {
-    const latitude = typeof lat === "string" ? Number.parseFloat(lat) : lat
-    const longitude = typeof lng === "string" ? Number.parseFloat(lng) : lng
-
-    return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
-  } catch (e) {
-    return `${lat}, ${lng}`
-  }
+/**
+ * Converte HTML para DOCX usando html-docx-js
+ */
+async function convertWithHtmlDocx(htmlContent: string): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    try {
+      const blob = window.htmlDocx.asBlob(htmlContent)
+      resolve(blob)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
+/**
+ * Inicia o download de um blob
+ */
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  setTimeout(() => {
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, 100)
+}
+
+/**
+ * Carrega a biblioteca html-docx-js dinamicamente
+ */
 function loadHtmlDocxScript(): Promise<void> {
   return new Promise((resolve, reject) => {
     if (window.htmlDocx) {
@@ -215,9 +192,16 @@ function loadHtmlDocxScript(): Promise<void> {
     script.src = "https://unpkg.com/html-docx-js/dist/html-docx.js"
     script.async = true
     script.onload = () => resolve()
-    script.onerror = () => reject(new Error("Failed to load html-docx"))
+    script.onerror = () => reject(new Error("Falha ao carregar html-docx-js"))
     document.head.appendChild(script)
   })
+}
+
+/**
+ * Formata uma data para uso em nome de arquivo
+ */
+function formatDateForFilename(date: Date): string {
+  return date.toISOString().split("T")[0]
 }
 
 // Definir o tipo global para o htmlDocx
