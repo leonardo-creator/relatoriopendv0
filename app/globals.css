@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 251 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 174 83% 59%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 8 82% 56%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 251 100% 50%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 251 100% 50%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 174 83% 59%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 8 82% 56%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 251 100% 50%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom colors */
+.bg-dark {
+  background-color: #110043;
+}
+
+.text-dark {
+  color: #110043;
+}
+
+.bg-light {
+  background-color: #f1f5f9;
+}
+
+.text-light {
+  color: #f1f5f9;
+}
+
+.bg-primary {
+  background-color: #3700ff;
+}
+
+.text-primary {
+  color: #3700ff;
+}
+
+.border-primary {
+  border-color: #3700ff;
+}
+
+.bg-accent {
+  background-color: #42eedc;
+}
+
+.text-accent {
+  color: #42eedc;
+}
+
+.border-accent {
+  border-color: #42eedc;
+}
+
+.bg-neutral {
+  background-color: #d4d4d8;
+}
+
+.text-neutral {
+  color: #d4d4d8;
+}
+
+.border-neutral {
+  border-color: #d4d4d8;
+}
+
+.bg-success {
+  background-color: #a2ff00;
+}
+
+.text-success {
+  color: #a2ff00;
+}
+
+.border-success {
+  border-color: #a2ff00;
+}
+
+.bg-error {
+  background-color: #ff3f19;
+}
+
+.text-error {
+  color: #ff3f19;
+}
+
+.border-error {
+  border-color: #ff3f19;
+}
+
+/* Hover states */
+.hover\:bg-primary\/90:hover {
+  background-color: rgba(55, 0, 255, 0.9);
+}
+
+.hover\:bg-primary\/10:hover {
+  background-color: rgba(55, 0, 255, 0.1);
+}
+
+.hover\:bg-accent\/10:hover {
+  background-color: rgba(66, 238, 220, 0.1);
+}
+
+.hover\:bg-success\/10:hover {
+  background-color: rgba(162, 255, 0, 0.1);
+}
+
+.hover\:bg-error\/90:hover {
+  background-color: rgba(255, 63, 25, 0.9);
+}
+
+/* Background opacity variants */
+.bg-accent\/10 {
+  background-color: rgba(66, 238, 220, 0.1);
+}
+
+.bg-success\/10 {
+  background-color: rgba(162, 255, 0, 0.1);
+}
+
+.bg-error\/10 {
+  background-color: rgba(255, 63, 25, 0.1);
+}
+
+/* Text opacity variants */
+.text-dark\/80 {
+  color: rgba(17, 0, 67, 0.8);
+}
+
+.text-dark\/60 {
+  color: rgba(17, 0, 67, 0.6);
+}
