@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Gerenciador de Metadados de Imagem",
   description: "Aplicação para gerenciar metadados de imagens com localização GPS",
-    generator: 'v0.dev'
+    generator: 'Leonardo Juvencio'
 }
 
 export default function RootLayout({
