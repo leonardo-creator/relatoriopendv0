@@ -1,7 +1,9 @@
 "use client"
 
-import { FileText, Globe, FileSpreadsheet, FileJson, Loader2, FileIcon as FilePdf } from "lucide-react"
+import { FileText, Globe, FileSpreadsheet, FileJson, Loader2, FileIcon as FilePdf, Smartphone, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { ImageMetadata } from "@/types/image-metadata"
 import { generateWord } from "@/lib/export/word"
 import { generatePDF } from "@/lib/export/pdf"
@@ -41,99 +43,167 @@ export function ActionButtons({ imageMetadataList, setImageMetadataList }: Actio
     }
   }
 
+  if (imageMetadataList.length === 0) {
+    return null
+  }
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral p-4">
-      <div className="container mx-auto">
-        <div className="flex flex-wrap gap-3 justify-center">
-          {/* Em dispositivos móveis, mostrar apenas o botão JSON */}
+    <TooltipProvider>
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg z-50">
+        <div className="container mx-auto px-4 py-3">
+          {/* Versão compacta para mobile */}
           {isMobile ? (
-            <Button
-              onClick={() => handleExport("json", () => generateJSON(imageMetadataList))}
-              disabled={isExporting !== null}
-              variant="outline"
-              className="border-accent text-accent hover:bg-accent/10 w-full"
-            >
-              {isExporting === "json" ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <FileJson className="mr-2 h-4 w-4" />
-              )}
-              Exportar JSON
-            </Button>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 flex items-center gap-2">
+                <Smartphone className="h-4 w-4" />
+                {imageMetadataList.length} {imageMetadataList.length === 1 ? 'imagem' : 'imagens'}
+              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => handleExport("json", () => generateJSON(imageMetadataList))}
+                    disabled={isExporting !== null}
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4"
+                  >
+                    {isExporting === "json" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileJson className="h-4 w-4" />
+                    )}
+                    <span className="ml-2">Exportar JSON</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Salva em JSON para transferir ao desktop</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           ) : (
-            // Em desktop, mostrar todos os botões
-            <>
-              <Button
-                onClick={() => handleExport("word", () => generateWord(imageMetadataList))}
-                disabled={isExporting !== null}
-                className="bg-primary hover:bg-primary/90"
-              >
-                {isExporting === "word" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileText className="mr-2 h-4 w-4" />
-                )}
-                Gerar Word
-              </Button>
+            /* Versão compacta para desktop */
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  Exportar {imageMetadataList.length} {imageMetadataList.length === 1 ? 'imagem' : 'imagens'}
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  <Monitor className="h-3 w-3 mr-1" />
+                  Todos os formatos
+                </Badge>
+              </div>
+              
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Botões compactos em linha */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => handleExport("word", () => generateWord(imageMetadataList))}
+                      disabled={isExporting !== null}
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      {isExporting === "word" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <FileText className="h-4 w-4" />
+                      )}
+                      <span className="ml-1">Word</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Documento Word editável</p>
+                  </TooltipContent>
+                </Tooltip>
 
-              <Button
-                onClick={() => handleExport("pdf", () => generatePDF(imageMetadataList))}
-                disabled={isExporting !== null}
-                className="bg-error hover:bg-error/90 text-white"
-              >
-                {isExporting === "pdf" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FilePdf className="mr-2 h-4 w-4" />
-                )}
-                Gerar PDF
-              </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => handleExport("pdf", () => generatePDF(imageMetadataList))}
+                      disabled={isExporting !== null}
+                      size="sm"
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      {isExporting === "pdf" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <FilePdf className="h-4 w-4" />
+                      )}
+                      <span className="ml-1">PDF</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Relatório PDF com mapas</p>
+                  </TooltipContent>
+                </Tooltip>
 
-              <Button
-                onClick={() => handleExport("kml", () => generateKML(imageMetadataList))}
-                disabled={isExporting !== null}
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10"
-              >
-                {isExporting === "kml" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Globe className="mr-2 h-4 w-4" />
-                )}
-                Gerar KML
-              </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => handleExport("excel", () => generateExcel(imageMetadataList))}
+                      disabled={isExporting !== null}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      {isExporting === "excel" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <FileSpreadsheet className="h-4 w-4" />
+                      )}
+                      <span className="ml-1">Excel</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Planilha Excel para análises</p>
+                  </TooltipContent>
+                </Tooltip>
 
-              <Button
-                onClick={() => handleExport("excel", () => generateExcel(imageMetadataList))}
-                disabled={isExporting !== null}
-                variant="outline"
-                className="border-success text-success hover:bg-success/10"
-              >
-                {isExporting === "excel" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileSpreadsheet className="mr-2 h-4 w-4" />
-                )}
-                Gerar Excel
-              </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => handleExport("kml", () => generateKML(imageMetadataList))}
+                      disabled={isExporting !== null}
+                      size="sm"
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      {isExporting === "kml" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Globe className="h-4 w-4" />
+                      )}
+                      <span className="ml-1">KML</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Arquivo KML para Google Earth</p>
+                  </TooltipContent>
+                </Tooltip>
 
-              <Button
-                onClick={() => handleExport("json", () => generateJSON(imageMetadataList))}
-                disabled={isExporting !== null}
-                variant="outline"
-                className="border-accent text-accent hover:bg-accent/10"
-              >
-                {isExporting === "json" ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileJson className="mr-2 h-4 w-4" />
-                )}
-                Exportar JSON
-              </Button>
-            </>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => handleExport("json", () => generateJSON(imageMetadataList))}
+                      disabled={isExporting !== null}
+                      size="sm"
+                      className="bg-orange-600 hover:bg-orange-700 text-white"
+                    >
+                      {isExporting === "json" ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <FileJson className="h-4 w-4" />
+                      )}
+                      <span className="ml-1">JSON</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Dados em formato JSON</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
           )}
         </div>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }

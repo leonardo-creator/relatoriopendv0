@@ -206,6 +206,25 @@ relatoriopendv0/
 - **Touch Friendly**: Botões e controles adequados para touch
 - **Performance**: Carregamento otimizado em conexões lentas
 
+## 📱 Mobile vs Desktop
+
+### 📱 Versão Mobile
+- **Limitação de exportação**: Apenas formato JSON disponível
+- **Vantagem**: Processamento direto no celular onde as fotos foram tiradas
+- **Uso recomendado**: Captura e processamento inicial no campo
+- **Máximo recomendado**: 50 fotos por vez para melhor performance
+
+### 💻 Versão Desktop  
+- **Exportação completa**: PDF, Word, Excel, KML e JSON
+- **Maior poder de processamento**: Pode lidar com mais imagens simultaneamente
+- **Recursos avançados**: Relatórios visuais com mapas e gráficos
+- **Workflow recomendado**: Importar JSON do mobile para gerar relatórios finais
+
+### 🔄 Workflow Mobile → Desktop
+1. **No celular**: Carregue fotos e exporte em JSON
+2. **Transfira** o arquivo JSON para o desktop (WhatsApp, email, nuvem)
+3. **No desktop**: Importe o JSON e exporte em qualquer formato
+
 ## 🤝 Contribuindo
 
 Contribuições são muito bem-vindas! Para contribuir:
