@@ -9,7 +9,10 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Gerenciador de Metadados de Imagem",
   description: "Aplicação para gerenciar metadados de imagens com localização GPS",
-    generator: 'Leonardo Juvencio'
+  generator: 'Leonardo Juvencio',
+  icons: {
+    icon: '/placeholder-logo.png',
+  },
 }
 
 export default function RootLayout({
@@ -19,6 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/icon.png" type="image/png" />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider 
           attribute="class" 

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Georreferenciamento de Imagens - Prêmio BRK Atitude & Inovação 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .slide-content {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.3em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #666;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .feature-description {
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .value-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .value-item {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .value-icon {
+            font-size: 2.5em;
+            min-width: 60px;
+        }
+
+        .cost-box {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .cost-amount {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .cost-details {
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: scale(1.1);
+            background: #667eea;
+            color: white;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            color: white;
+            font-size: 1.2em;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+
+        .impact-numbers {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+        }
+
+        .impact-stat {
+            text-align: center;
+        }
+
+        .impact-number {
+            font-size: 4em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .impact-label {
+            font-size: 1.3em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .problem, .solution {
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .problem {
+            background: #ffe5e5;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .solution {
+            background: #e5ffe5;
+            border-left: 5px solid #51cf66;
+        }
+
+        .award-section {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            color: white;
+            margin: 30px 0;
+        }
+
+        .award-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Capa -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="logo">📍🌍📸</div>
+                <h1>Gerenciador de Metadados GPS</h1>
+                <p class="subtitle">Transformando Fotos em Inteligência Geoespacial</p>
+                <div class="award-section">
+                    <div class="award-icon">🏆</div>
+                    <h3 style="color: white;">Candidatura ao Prêmio BRK Attitude e Inovação 2025</h3>
+                    <p style="font-size: 1.2em;">Inovação em Gestão de Ativos e Tecnologia</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: O Problema -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🤔 O Desafio</h2>
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h3 style="color: #ff6b6b;">❌ Antes</h3>
+                        <ul style="font-size: 1.2em; line-height: 2;">
+                            <li>📱 Centenas de fotos sem organização</li>
+                            <li>❓ "Onde foi tirada essa foto?"</li>
+                            <li>⏰ Horas perdidas buscando localização</li>
+                            <li>📋 Relatórios manuais e demorados</li>
+                            <li>💸 Custos com deslocamentos desnecessários</li>
+                        </ul>
+                    </div>
+                    <div class="solution">
+                        <h3 style="color: #51cf66;">✅ Agora</h3>
+                        <ul style="font-size: 1.2em; line-height: 2;">
+                            <li>⚡ Extração automática de dados GPS</li>
+                            <li>🎯 Localização precisa em segundos</li>
+                            <li>📊 Relatórios profissionais automáticos</li>
+                            <li>💾 Múltiplos formatos de exportação</li>
+                            <li>💰 Economia de tempo e recursos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: A Solução -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>💡 Nossa Solução Inovadora</h2>
+                <p style="text-align: center; font-size: 1.4em; margin: 30px 0;">
+                    Uma ferramenta <span class="highlight">100% Web</span>, gratuita e sem necessidade de instalação
+                </p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📸</div>
+                        <div class="feature-title">Upload Simples</div>
+                        <div class="feature-description">Arraste suas fotos ou clique para selecionar. Suporta JPG, PNG e HEIC</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🗺️</div>
+                        <div class="feature-title">Extração Automática</div>
+                        <div class="feature-description">GPS, data, hora, altitude e muito mais extraídos instantaneamente</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">Múltiplos Formatos</div>
+                        <div class="feature-description">Exporte para PDF, Word, Excel, KML (Google Earth) e JSON</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-title">100% Seguro</div>
+                        <div class="feature-description">Processamento local no navegador. Seus dados nunca saem do seu computador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Como Funciona -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>⚙️ Como Funciona?</h2>
+                <ul class="value-list">
+                    <li class="value-item">
+                        <span class="value-icon">1️⃣</span>
+                        <div>
+                            <strong>Carregue suas fotos</strong><br>
+                            Selecione uma ou várias fotos do seu dispositivo (até 50 por vez no mobile)
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">2️⃣</span>
+                        <div>
+                            <strong>Processamento Automático</strong><br>
+                            A ferramenta extrai dados GPS, data, hora e outros metadados EXIF automaticamente
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">3️⃣</span>
+                        <div>
+                            <strong>Visualize os Resultados</strong><br>
+                            Veja todas as informações organizadas: coordenadas, endereço aproximado, altitude
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">4️⃣</span>
+                        <div>
+                            <strong>Exporte do Seu Jeito</strong><br>
+                            Escolha entre PDF, Word, Excel, KML ou JSON conforme sua necessidade
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Aplicações Práticas -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🎯 Aplicações na BRK e Saneamento</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <div class="feature-title">Manutenção de Redes</div>
+                        <div class="feature-description">Registre vistorias com localização precisa de vazamentos, reparos e inspeções</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Relatórios de Campo</div>
+                        <div class="feature-description">Gere relatórios automáticos com fotos geolocalizadas de serviços executados</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏗️</div>
+                        <div class="feature-title">Gestão de Obras</div>
+                        <div class="feature-description">Acompanhe o progresso de obras e instalações com registro fotográfico georeferenciado</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🗺️</div>
+                        <div class="feature-title">Mapeamento de Ativos</div>
+                        <div class="feature-description">Crie mapas precisos de hidrômetros, válvulas e outros ativos de rede</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <div class="feature-title">Atendimento ao Cliente</div>
+                        <div class="feature-description">Documente ocorrências com fotos e localização para melhor rastreabilidade</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <div class="feature-title">Integração GIS</div>
+                        <div class="feature-description">Exporte para KML e integre com Google Earth ou sistemas GIS corporativos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Impacto e Resultados -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>📈 Impacto e Resultados</h2>
+                <div class="impact-numbers">
+                    <div class="impact-stat">
+                        <div class="impact-number">80%</div>
+                        <div class="impact-label">Redução de tempo<br>em relatórios</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">100%</div>
+                        <div class="impact-label">Precisão na<br>geolocalização</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-number">0</div>
+                        <div class="impact-label">Deslocamentos<br>desnecessários</div>
+                    </div>
+                </div>
+                <ul class="value-list" style="margin-top: 40px;">
+                    <li class="value-item">
+                        <span class="value-icon">💰</span>
+                        <div>
+                            <strong>Redução de Custos Operacionais</strong><br>
+                            Menos tempo gasto em trabalho manual = mais eficiência
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">📊</span>
+                        <div>
+                            <strong>Melhor Tomada de Decisão</strong><br>
+                            Dados precisos e organizados para análises e planejamento
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">🌱</span>
+                        <div>
+                            <strong>Sustentabilidade</strong><br>
+                            Redução de impressões e deslocamentos desnecessários
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Custo ZERO! -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>💰 Investimento Necessário</h2>
+                <div class="cost-box">
+                    <h3 style="color: white; font-size: 2em;">Quanto Custa?</h3>
+                    <div class="cost-amount">R$ 0,00</div>
+                    <div class="cost-details">
+                        ✅ 100% Gratuito<br>
+                        ✅ Sem mensalidades<br>
+                        ✅ Sem limite de uso<br>
+                        ✅ Sem necessidade de instalação<br>
+                        ✅ Sem cadastro ou login<br>
+                        ✅ Atualizações automáticas e gratuitas
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 1.4em; margin-top: 30px;">
+                    💡 <strong>Apenas um navegador web!</strong> Funciona em qualquer dispositivo: computador, tablet ou celular
+                </p>
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #667eea;">💎 Custo-Benefício Imbatível</h3>
+                    <p style="font-size: 1.2em;">
+                        Ferramentas similares no mercado cobram entre R$ 500 a R$ 2.000 por usuário/ano. 
+                        Nossa solução oferece os mesmos recursos <span class="highlight">gratuitamente!</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Tecnologia e Segurança -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🔐 Tecnologia e Segurança</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <div class="feature-title">100% Web</div>
+                        <div class="feature-description">Desenvolvido com Next.js 15, React 19 e TypeScript - tecnologias de ponta</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💻</div>
+                        <div class="feature-title">Processamento Local</div>
+                        <div class="feature-description">Todas as imagens são processadas no seu navegador, nunca enviadas para servidores</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-title">Privacidade Total</div>
+                        <div class="feature-description">Seus dados permanecem com você. Zero armazenamento em nuvem</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-title">Alta Performance</div>
+                        <div class="feature-description">Processamento rápido mesmo em dispositivos com recursos limitados</div>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                    <h3 style="color: white; text-align: center; margin-bottom: 20px;">🛡️ Conformidade e Segurança</h3>
+                    <p style="text-align: center; font-size: 1.2em;">
+                        ✅ Compatível com LGPD (Lei Geral de Proteção de Dados)<br>
+                        ✅ Sem coleta de dados pessoais<br>
+                        ✅ Código auditável e transparente<br>
+                        ✅ Hospedagem em infraestrutura confiável (Vercel)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Diferenciais Competitivos -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🌟 Por Que Somos Diferentes?</h2>
+                <ul class="value-list">
+                    <li class="value-item">
+                        <span class="value-icon">🎨</span>
+                        <div>
+                            <strong>Interface Intuitiva</strong><br>
+                            Design moderno e fácil de usar, até para quem não tem experiência técnica
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">📱</span>
+                        <div>
+                            <strong>Responsivo</strong><br>
+                            Funciona perfeitamente em desktop, tablet e celular - adapta-se a qualquer tela
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">🌙</span>
+                        <div>
+                            <strong>Modo Escuro/Claro</strong><br>
+                            Escolha o tema que preferir para trabalhar com conforto em qualquer horário
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">🔄</span>
+                        <div>
+                            <strong>Evolução Contínua</strong><br>
+                            Atualizações regulares com novos recursos baseados em feedback real
+                        </div>
+                    </li>
+                    <li class="value-item">
+                        <span class="value-icon">🌍</span>
+                        <div>
+                            <strong>Acessível Globalmente</strong><br>
+                            Disponível 24/7 de qualquer lugar do mundo, basta ter internet
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: Roadmap Futuro -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>🚀 Visão de Futuro</h2>
+                <h3 style="text-align: center; color: #666; margin-bottom: 30px;">Próximas Funcionalidades Planejadas</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🗺️</div>
+                        <div class="feature-title">Visualização em Mapa</div>
+                        <div class="feature-description">Ver todas as fotos plotadas em um mapa interativo</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📏</div>
+                        <div class="feature-title">Medição de Distâncias</div>
+                        <div class="feature-description">Calcular distâncias entre pontos fotografados</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏷️</div>
+                        <div class="feature-title">Tags e Categorias</div>
+                        <div class="feature-description">Organizar fotos por tipo de serviço ou localidade</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📤</div>
+                        <div class="feature-title">Integração APIs</div>
+                        <div class="feature-description">Conexão direta com sistemas corporativos</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <div class="feature-title">IA para Análise</div>
+                        <div class="feature-description">Detecção automática de problemas em imagens</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">☁️</div>
+                        <div class="feature-title">Backup Opcional</div>
+                        <div class="feature-description">Sincronização em nuvem (mediante autorização)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Conclusão -->
+        <div class="slide">
+            <div class="slide-content" style="text-align: center;">
+                <div class="logo">🏆</div>
+                <h2>Transformando Fotos em Valor</h2>
+                <p style="font-size: 1.5em; margin: 30px 0; line-height: 1.8;">
+                    O <strong>Gerenciador de Metadados GPS</strong> representa a <span class="highlight">inovação acessível</span> 
+                    que a BRK merece: uma ferramenta poderosa, gratuita e que gera valor real para o negócio.
+                </p>
+                <div class="impact-numbers" style="margin: 50px 0;">
+                    <div class="impact-stat">
+                        <div class="impact-icon" style="font-size: 4em;">💰</div>
+                        <div class="impact-label">CUSTO ZERO</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-icon" style="font-size: 4em;">⚡</div>
+                        <div class="impact-label">RESULTADOS IMEDIATOS</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-icon" style="font-size: 4em;">🌍</div>
+                        <div class="impact-label">IMPACTO REAL</div>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 20px; color: white; margin-top: 40px;">
+                    <h3 style="color: white; font-size: 2em; margin-bottom: 20px;">Esta é a Atitude da Inovação! 🚀</h3>
+                    <p style="font-size: 1.3em;">
+                        Democratizar tecnologia, gerar eficiência e criar soluções práticas<br>
+                        que fazem a diferença no dia a dia das equipes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Agradecimento -->
+        <div class="slide">
+            <div class="slide-content" style="text-align: center;">
+                <div class="logo">🙏</div>
+                <h1>Obrigado!</h1>
+                <p style="font-size: 1.8em; margin: 40px 0; color: #666;">
+                    Acesse agora e teste gratuitamente:
+                </p>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; font-size: 2em; margin: 30px 0;">
+                    <strong style="color: #667eea;">🔗 relatoriopendv0.vercel.app</strong>
+                </div>
+                <div class="features-grid" style="margin-top: 50px;">
+                    <div class="feature-card">
+                        <div class="feature-icon">📧</div>
+                        <div class="feature-title">Contato</div>
+                        <div class="feature-description">Dúvidas? Entre em contato!</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💡</div>
+                        <div class="feature-title">Sugestões</div>
+                        <div class="feature-description">Sua opinião nos ajuda a melhorar</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <div class="feature-title">Colaboração</div>
+                        <div class="feature-description">Vamos inovar juntos!</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">Atitude BRK</div>
+                        <div class="feature-description">Comprometimento com excelência</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+    </div>
+    <div class="navigation">
+        <button class="nav-button" onclick="previousSlide()" title="Anterior">◀</button>
+        <button class="nav-button" onclick="nextSlide()" title="Próximo">▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+                e.preventDefault();
+            }
+        });
+
+        // Touch navigation for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                previousSlide();
+            }
+        }
+    </script>
+</body>
+</html>

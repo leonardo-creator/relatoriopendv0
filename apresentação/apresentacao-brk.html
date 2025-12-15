@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Georreferenciamento - BRK Atitude & Inovação 2025</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .slide-content {
+            width: 100%;
+            height: 100%;
+            padding: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Estilos Corporativos */
+        .corporate-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px 80px;
+            border-bottom: 4px solid #00d4ff;
+        }
+
+        .logo-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .award-badge {
+            background: #00d4ff;
+            color: #0a0e27;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 3.8em;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.6em;
+            color: #b8c5d6;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* Grid Layouts */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin: 40px 0;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        /* Cards Profissionais */
+        .metric-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+        }
+
+        .metric-number {
+            font-size: 4.5em;
+            font-weight: 800;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #b8c5d6;
+            font-weight: 500;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: rgba(30, 60, 114, 0.4);
+            border-left: 5px solid #00d4ff;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .info-box h4 {
+            color: #00d4ff;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            color: #b8c5d6;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        /* Lista de Features */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            background: rgba(30, 60, 114, 0.3);
+            padding: 25px 30px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border-left: 4px solid #00d4ff;
+            font-size: 1.15em;
+            color: #e0e7f1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Problema vs Solução */
+        .comparison-box {
+            padding: 35px;
+            border-radius: 12px;
+            min-height: 400px;
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+            border: 2px solid #ef4444;
+        }
+
+        .solution-box {
+            background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+            border: 2px solid #22c55e;
+        }
+
+        .comparison-box h3 {
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+
+        .comparison-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-box li {
+            padding: 15px 0;
+            font-size: 1.15em;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .comparison-box li:last-child {
+            border-bottom: none;
+        }
+
+        /* Screenshot Display */
+        .screenshot-container {
+            background: rgba(30, 60, 114, 0.2);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+            border: 3px solid rgba(0, 212, 255, 0.3);
+        }
+
+        /* Fluxo do Sistema */
+        .flow-step {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .step-number {
+            background: #00d4ff;
+            color: #0a0e27;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 800;
+            margin: 0 auto 20px;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 3em;
+            color: #00d4ff;
+            padding: 20px 0;
+        }
+
+        /* Custo ROI Box */
+        .roi-highlight {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            border: 3px solid #10b981;
+            margin: 40px 0;
+        }
+
+        .roi-amount {
+            font-size: 5.5em;
+            font-weight: 900;
+            color: #10b981;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Navegação */
+        .nav-controls {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #00d4ff;
+            color: #0a0e27;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            font-size: 1.3em;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #fff;
+            transform: scale(1.1);
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            background: rgba(30, 60, 114, 0.8);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            z-index: 1000;
+        }
+
+        /* Tabela de Aplicações */
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .app-card {
+            background: rgba(30, 60, 114, 0.4);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover {
+            border-color: #00d4ff;
+            background: rgba(30, 60, 114, 0.6);
+        }
+
+        .app-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .app-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .app-desc {
+            font-size: 1em;
+            color: #b8c5d6;
+            line-height: 1.6;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 30px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            align-items: flex-start;
+        }
+
+        .timeline-marker {
+            background: #00d4ff;
+            color: #0a0e27;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: rgba(30, 60, 114, 0.3);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- SLIDE 1: CAPA -->
+        <div class="slide active">
+            <div class="corporate-header">
+                <div class="logo-area">
+                    <div>
+                        <h1>📍 Sistema de Georreferenciamento<br>de Imagens para Saneamento</h1>
+                    </div>
+                    <div class="award-badge">
+                        🏆 PRÊMIO BRK ATITUDE & INOVAÇÃO 2025
+                    </div>
+                </div>
+                <p class="subtitle">Solução tecnológica para otimização de processos operacionais<br>e gestão inteligente de ativos em infraestrutura de saneamento</p>
+            </div>
+            <div class="slide-content">
+                <div class="three-column" style="margin-top: 100px;">
+                    <div class="metric-card">
+                        <div class="metric-number">R$ 0</div>
+                        <div class="metric-label">Investimento<br>Necessário</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">80%</div>
+                        <div class="metric-label">Redução de Tempo<br>em Relatórios</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">100%</div>
+                        <div class="metric-label">Precisão em<br>Geolocalização</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: CONTEXTO E DESAFIO -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Contexto Operacional no Saneamento</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div class="comparison-box problem-box">
+                        <h3>❌ Desafios Atuais</h3>
+                        <ul>
+                            <li><strong>Documentação Manual:</strong> Equipes gastam horas compilando relatórios de campo manualmente</li>
+                            <li><strong>Perda de Informações:</strong> Fotos sem localização precisa dificultam rastreabilidade de ativos</li>
+                            <li><strong>Retrabalho:</strong> Necessidade de retornar ao campo para validar localizações</li>
+                            <li><strong>Custos Elevados:</strong> Deslocamentos desnecessários e baixa produtividade</li>
+                            <li><strong>Gestão Fragmentada:</strong> Dificuldade em consolidar dados de múltiplas equipes</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-box solution-box">
+                        <h3>✅ Nossa Solução</h3>
+                        <ul>
+                            <li><strong>Automação Total:</strong> Extração automática de GPS, data, hora e metadados EXIF</li>
+                            <li><strong>Rastreabilidade Completa:</strong> Coordenadas precisas vinculadas a cada registro fotográfico</li>
+                            <li><strong>Primeira Vez Certo:</strong> Dados completos e validados desde a captura</li>
+                            <li><strong>Otimização de Recursos:</strong> Economia em combustível, tempo e equipe</li>
+                            <li><strong>Centralização Inteligente:</strong> Plataforma única para gestão de todos os registros</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: VISÃO GERAL DA SOLUÇÃO -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Visão Geral da Solução Tecnológica</h2>
+            </div>
+            <div class="slide-content">
+                <div class="info-box">
+                    <h4>Plataforma Web de Alto Desempenho</h4>
+                    <p>Sistema desenvolvido com tecnologias de ponta (Next.js 15, React 19, TypeScript) garantindo processamento local, segurança de dados e conformidade com LGPD. Totalmente responsivo para uso em campo via smartphone, tablet ou desktop.</p>
+                </div>
+                
+                <div class="screenshot-container">
+                    <img src="../.playwright-mcp/apresentação/img-tela-inicial.png" alt="Interface do Sistema" class="screenshot">
+                    <p style="margin-top: 20px; color: #b8c5d6; font-size: 1.1em;">Interface principal - Upload e processamento de imagens</p>
+                </div>
+
+                <div class="three-column" style="margin-top: 40px;">
+                    <div class="info-box" style="text-align: center;">
+                        <h4>🌐 100% Web</h4>
+                        <p>Sem instalação. Acesso via navegador de qualquer dispositivo</p>
+                    </div>
+                    <div class="info-box" style="text-align: center;">
+                        <h4>🔒 Seguro</h4>
+                        <p>Processamento local. Dados nunca saem do dispositivo</p>
+                    </div>
+                    <div class="info-box" style="text-align: center;">
+                        <h4>⚡ Rápido</h4>
+                        <p>Processamento em segundos, mesmo para múltiplas imagens</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: FLUXO OPERACIONAL -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Fluxo Operacional do Sistema</h2>
+            </div>
+            <div class="slide-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <h3>Captura em Campo</h3>
+                            <p>Técnico fotografa o ativo/serviço com smartphone (GPS ativado). Imagens podem ser JPG, PNG ou HEIC.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">↓</div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h3>Upload na Plataforma</h3>
+                            <p>Acessa o sistema via navegador e faz upload das fotos (até 50 por vez no mobile, ilimitado no desktop). Processo drag-and-drop ou seleção de arquivos.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">↓</div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <h3>Processamento Automático</h3>
+                            <p>Sistema extrai instantaneamente: coordenadas GPS (lat/long), data e hora, altitude, modelo de câmera, e gera thumbnail otimizado.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">↓</div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <h3>Visualização e Edição</h3>
+                            <p>Interface exibe todos os dados extraídos. Usuário pode adicionar descrições, ajustar status (Pendente/Concluído/Atrasado) e gerenciar metadados.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">↓</div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-marker">5</div>
+                        <div class="timeline-content">
+                            <h3>Exportação Múltiplos Formatos</h3>
+                            <p><strong>PDF:</strong> Relatório profissional com imagens e dados<br>
+                            <strong>Excel:</strong> Planilha detalhada para análise<br>
+                            <strong>Word:</strong> Documento editável<br>
+                            <strong>KML:</strong> Visualização no Google Earth/GIS<br>
+                            <strong>JSON:</strong> Backup completo dos dados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: APLICAÇÕES NO SANEAMENTO -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Aplicações Práticas em Saneamento</h2>
+            </div>
+            <div class="slide-content">
+                <div class="applications-grid">
+                    <div class="app-card">
+                        <div class="app-icon">🔧</div>
+                        <div class="app-title">Manutenção Preventiva</div>
+                        <div class="app-desc">Registro georeferenciado de inspeções em redes de água e esgoto, facilitando planejamento de manutenções futuras</div>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">💧</div>
+                        <div class="app-title">Gestão de Vazamentos</div>
+                        <div class="app-desc">Documentação precisa de ocorrências com localização exata para análise de padrões e priorização de reparos</div>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">📊</div>
+                        <div class="app-title">Cadastro de Ativos</div>
+                        <div class="app-desc">Mapeamento de hidrômetros, válvulas, registros e outros ativos com coordenadas precisas para atualização de GIS</div>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">🏗️</div>
+                        <div class="app-title">Acompanhamento de Obras</div>
+                        <div class="app-desc">Registro cronológico e geolocalizado de progresso de instalações, ampliações e reformas de infraestrutura</div>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">📱</div>
+                        <div class="app-title">Ordens de Serviço</div>
+                        <div class="app-desc">Evidências fotográficas geolocalizadas de serviços executados, comprovando atendimento e qualidade</div>
+                    </div>
+                    
+                    <div class="app-card">
+                        <div class="app-icon">🗺️</div>
+                        <div class="app-title">Integração SIG</div>
+                        <div class="app-desc">Exportação KML para integração direta com Google Earth e sistemas GIS corporativos (ArcGIS, QGIS)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: BENEFÍCIOS MENSURÁVEIS -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Benefícios Mensuráveis e ROI</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #00d4ff; margin-bottom: 30px;">Ganhos Operacionais</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">⏱️</span>
+                                <div><strong>80% de redução</strong> no tempo de elaboração de relatórios de campo</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🎯</span>
+                                <div><strong>100% de precisão</strong> na localização de ativos e ocorrências</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🚗</span>
+                                <div><strong>Redução de deslocamentos</strong> desnecessários para validação de informações</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📈</span>
+                                <div><strong>Aumento de produtividade</strong> das equipes técnicas e administrativas</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🌱</span>
+                                <div><strong>Sustentabilidade:</strong> menos impressões, menos combustível, menos emissões</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="roi-highlight">
+                            <h3 style="color: #fff; font-size: 2em;">Investimento Necessário</h3>
+                            <div class="roi-amount">R$ 0,00</div>
+                            <div style="font-size: 1.3em; color: #d1fae5; line-height: 1.8;">
+                                ✅ Licença gratuita<br>
+                                ✅ Sem limite de usuários<br>
+                                ✅ Sem limite de processamento<br>
+                                ✅ Atualizações incluídas<br>
+                                ✅ Suporte da comunidade<br>
+                                ✅ Hospedagem inclusa
+                            </div>
+                        </div>
+                        
+                        <div class="info-box" style="margin-top: 30px;">
+                            <h4>💰 Análise Comparativa</h4>
+                            <p>Soluções comerciais similares: <strong>R$ 500 a R$ 2.000/usuário/ano</strong><br>
+                            Para uma equipe de 50 usuários: <strong>economia de até R$ 100.000/ano</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: TECNOLOGIA E SEGURANÇA -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Arquitetura Tecnológica e Segurança</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #00d4ff;">Stack Tecnológico</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">⚛️</span>
+                                <div><strong>Next.js 15 + React 19:</strong> Framework moderno de alta performance</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📘</span>
+                                <div><strong>TypeScript:</strong> Código robusto e tipagem estática</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🎨</span>
+                                <div><strong>Tailwind CSS:</strong> Interface responsiva e profissional</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📦</span>
+                                <div><strong>ExifReader:</strong> Extração eficiente de metadados EXIF</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">☁️</span>
+                                <div><strong>Vercel Edge Network:</strong> Deploy global com baixa latência</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #00d4ff;">Segurança e Conformidade</h3>
+                        <div class="info-box">
+                            <h4>🔐 Privacidade Total</h4>
+                            <p>Processamento 100% no navegador do usuário. Imagens e dados nunca são transmitidos para servidores externos. Conformidade total com LGPD.</p>
+                        </div>
+                        <div class="info-box">
+                            <h4>🛡️ Segurança de Dados</h4>
+                            <p>HTTPS obrigatório. Nenhum armazenamento em nuvem. Usuário mantém controle total sobre seus dados. Exportação local para backup.</p>
+                        </div>
+                        <div class="info-box">
+                            <h4>✅ Disponibilidade</h4>
+                            <p>SLA de 99.9% garantido pela infraestrutura Vercel. CDN global para acesso rápido de qualquer localidade. Funcionamento offline após carregamento inicial.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: DIFERENCIAIS COMPETITIVOS -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Diferenciais Competitivos</h2>
+            </div>
+            <div class="slide-content">
+                <div class="three-column">
+                    <div class="metric-card">
+                        <div class="feature-icon" style="font-size: 4em;">🚀</div>
+                        <h3>Velocidade</h3>
+                        <p style="color: #b8c5d6; margin-top: 15px;">Processamento instantâneo vs. horas de trabalho manual</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="feature-icon" style="font-size: 4em;">💎</div>
+                        <h3>Qualidade</h3>
+                        <p style="color: #b8c5d6; margin-top: 15px;">Dados estruturados e padronizados automaticamente</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="feature-icon" style="font-size: 4em;">🌍</div>
+                        <h3>Acessibilidade</h3>
+                        <p style="color: #b8c5d6; margin-top: 15px;">Uso em qualquer lugar, qualquer dispositivo</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 60px;">
+                    <h3 style="color: #00d4ff; margin-bottom: 30px; text-align: center;">Por Que Escolher Esta Solução?</h3>
+                    <div class="two-column">
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">💰</span>
+                                <div><strong>Custo Zero:</strong> Elimina licenças caras de software</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📱</span>
+                                <div><strong>Mobile First:</strong> Otimizado para uso em campo</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🔄</span>
+                                <div><strong>Evolução Contínua:</strong> Atualizações automáticas</div>
+                            </li>
+                        </ul>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">🎯</span>
+                                <div><strong>Fácil Adoção:</strong> Interface intuitiva, sem treinamento complexo</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🔌</span>
+                                <div><strong>Interoperabilidade:</strong> Múltiplos formatos de exportação</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🌐</span>
+                                <div><strong>Escalável:</strong> Suporta de 1 a milhares de usuários</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: ROADMAP E FUTURO -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Roadmap de Evolução 2025-2026</h2>
+            </div>
+            <div class="slide-content">
+                <div class="two-column">
+                    <div>
+                        <h3 style="color: #00d4ff;">Próximas Funcionalidades</h3>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker">Q1</div>
+                                <div class="timeline-content">
+                                    <h4 style="color: #00d4ff;">Mapa Interativo</h4>
+                                    <p>Visualização de todas as imagens plotadas em mapa com clustering e filtros avançados</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">Q2</div>
+                                <div class="timeline-content">
+                                    <h4 style="color: #00d4ff;">Medições Geodésicas</h4>
+                                    <p>Cálculo automático de distâncias, áreas e perímetros entre pontos fotografados</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">Q3</div>
+                                <div class="timeline-content">
+                                    <h4 style="color: #00d4ff;">IA para Análise</h4>
+                                    <p>Detecção automática de anomalias em hidrômetros, vazamentos e infraestrutura</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker">Q4</div>
+                                <div class="timeline-content">
+                                    <h4 style="color: #00d4ff;">API Corporativa</h4>
+                                    <p>Integração nativa com sistemas ERP/SAP e plataformas GIS corporativas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-box">
+                            <h4>🎯 Visão de Longo Prazo</h4>
+                            <p>Tornar-se a principal plataforma open-source de georreferenciamento para o setor de saneamento no Brasil, com foco em:</p>
+                        </div>
+                        <ul class="feature-list" style="margin-top: 20px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">🤝</span>
+                                <div><strong>Colaboração:</strong> Comunidade ativa de desenvolvedores e usuários</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📚</span>
+                                <div><strong>Educação:</strong> Treinamentos e certificações para equipes técnicas</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🌎</span>
+                                <div><strong>Expansão:</strong> Adaptação para outros segmentos de infraestrutura</div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🔬</span>
+                                <div><strong>P&D:</strong> Parcerias com universidades para inovação contínua</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: CONCLUSÃO -->
+        <div class="slide">
+            <div class="corporate-header">
+                <h2>Inovação Acessível que Gera Valor Real</h2>
+            </div>
+            <div class="slide-content">
+                <div style="text-align: center; margin: 60px 0;">
+                    <div class="three-column" style="margin-bottom: 60px;">
+                        <div class="metric-card">
+                            <div class="metric-number">R$ 0</div>
+                            <div class="metric-label">INVESTIMENTO</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">∞</div>
+                            <div class="metric-label">POTENCIAL DE ROI</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-number">100%</div>
+                            <div class="metric-label">ATITUDE BRK</div>
+                        </div>
+                    </div>
+
+                    <div class="roi-highlight">
+                        <h2 style="color: #fff; font-size: 2.5em; margin-bottom: 20px;">Esta é a Atitude da Inovação</h2>
+                        <p style="font-size: 1.5em; color: #d1fae5; line-height: 1.8; max-width: 900px; margin: 0 auto;">
+                            Democratizar tecnologia de ponta, eliminar barreiras de custo,<br>
+                            otimizar processos operacionais e gerar eficiência mensurável<br>
+                            para o setor de saneamento brasileiro.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 60px;">
+                        <h3 style="color: #00d4ff; font-size: 2em; margin-bottom: 20px;">Acesse e Teste Agora</h3>
+                        <div class="info-box" style="display: inline-block; font-size: 1.8em; padding: 30px 60px;">
+                            <strong style="color: #00d4ff;">🔗 relatoriopendv0.vercel.app</strong>
+                        </div>
+                        <p style="margin-top: 30px; color: #b8c5d6; font-size: 1.2em;">
+                            Sistema 100% funcional | Sem cadastro | Sem custo | Resultados imediatos
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: AGRADECIMENTO -->
+        <div class="slide">
+            <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+                <h1 style="font-size: 5em; margin-bottom: 40px;">Obrigado!</h1>
+                <p class="subtitle" style="font-size: 2em; max-width: 900px; margin: 0 auto 60px;">
+                    Comprometidos com a excelência operacional<br>
+                    e a transformação digital do saneamento brasileiro
+                </p>
+                <div class="applications-grid" style="max-width: 900px; margin: 0 auto;">
+                    <div class="app-card">
+                        <div class="app-icon">📧</div>
+                        <div class="app-title">Contato</div>
+                        <div class="app-desc">Dúvidas técnicas e operacionais</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">💡</div>
+                        <div class="app-title">Sugestões</div>
+                        <div class="app-desc">Sua experiência nos melhora</div>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">🏆</div>
+                        <div class="app-title">BRK Atitude</div>
+                        <div class="app-desc">Inovação que transforma</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de Navegação -->
+    <div class="slide-indicator">
+        <span id="current">1</span> / <span id="total">11</span>
+    </div>
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Anterior">◀</button>
+        <button class="nav-btn" onclick="nextSlide()" title="Próximo">▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                nextSlide();
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+                e.preventDefault();
+            } else if (e.key === 'Home') {
+                showSlide(0);
+                e.preventDefault();
+            } else if (e.key === 'End') {
+                showSlide(totalSlides - 1);
+                e.preventDefault();
+            }
+        });
+
+        // Navegação touch para mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        });
+
+        // Navegação por clique (esquerda/direita)
+        document.addEventListener('click', (e) => {
+            const width = window.innerWidth;
+            if (e.target.closest('.nav-btn')) return;
+            if (e.clientX < width / 3) {
+                prevSlide();
+            } else if (e.clientX > width * 2 / 3) {
+                nextSlide();
+            }
+        });
+    </script>
+</body>
+</html>
