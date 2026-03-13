@@ -8,6 +8,7 @@ import { ImageUploader } from "@/components/image-uploader"
 import { MetadataList } from "@/components/metadata-list"
 import { ActionButtons } from "@/components/action-buttons"
 import { processImageFiles } from "@/lib/image-processor"
+import { normalizeCoordinate } from "@/lib/coordinate-utils"
 import { useToast } from "@/hooks/use-toast"
 
 export default function ImageMetadataManager() {
@@ -46,11 +47,20 @@ export default function ImageMetadataManager() {
       try {
         const text = await file.text()
         const jsonData = JSON.parse(text) as ImageMetadata[]
-        setImageMetadataList(jsonData)
+
+        // Validar e normalizar coordenadas
+        const normalizedData = jsonData.map((item, idx) => ({
+          ...item,
+          index: idx,
+          Latitude: normalizeCoordinate(item.Latitude),
+          Longitude: normalizeCoordinate(item.Longitude),
+        }))
+
+        setImageMetadataList(normalizedData)
 
         toast({
           title: "JSON carregado",
-          description: `${jsonData.length} registros importados.`,
+          description: `${normalizedData.length} registros importados.`,
         })
       } catch (error) {
         console.error("Erro ao carregar JSON:", error)

@@ -1,6 +1,7 @@
 import type { ImageMetadata } from "@/types/image-metadata"
 import JSZip from "jszip"
 import { saveAs } from "file-saver"
+import { hasValidCoordinates, normalizeCoordinate } from "@/lib/coordinate-utils"
 
 export async function generateKMZ(imageMetadataList: ImageMetadata[]) {
   try {
@@ -28,11 +29,11 @@ export async function generateKMZ(imageMetadataList: ImageMetadata[]) {
 
     // Processar imagens
     for (const [index, item] of imageMetadataList.entries()) {
-      if (item.Latitude === "N/A" || item.Longitude === "N/A") continue
-      
+      if (!hasValidCoordinates(item)) continue
+
       const fileName = `img_${index}.jpg`
       const imageBuffer = dataURItoBuffer(item.thumbnail)
-      
+
       // Adicionar imagem ao ZIP
       if (kmlFolder) {
         kmlFolder.file(fileName, imageBuffer)
@@ -40,9 +41,9 @@ export async function generateKMZ(imageMetadataList: ImageMetadata[]) {
 
       // Adicionar Placemark ao KML
       const styleId = item.status.toLowerCase()
-      // Garantir coordenadas numéricas
-      const lat = typeof item.Latitude === "string" ? parseFloat(item.Latitude) : item.Latitude
-      const lng = typeof item.Longitude === "string" ? parseFloat(item.Longitude) : item.Longitude
+      // Normalizar e converter coordenadas para números
+      const lat = Number(normalizeCoordinate(item.Latitude))
+      const lng = Number(normalizeCoordinate(item.Longitude))
 
       kmlContent += `
       <Placemark>

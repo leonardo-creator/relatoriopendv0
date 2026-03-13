@@ -33,10 +33,10 @@ function readImageMetadata(file: File, index: number): Promise<ImageMetadata> {
       const img = new Image()
       img.src = e.target?.result as string
 
-      img.onload = () => {
+      img.onload = async () => {
         try {
           // Usar uma abordagem mais segura para extrair metadados EXIF
-          const exifData = extractExifData(img)
+          const exifData = await extractExifData(img)
 
           const defaultPredictionDate = addBusinessDays(new Date(), 7)
           const predictionDate = defaultPredictionDate.toISOString().split("T")[0]
@@ -108,42 +108,44 @@ function readImageMetadata(file: File, index: number): Promise<ImageMetadata> {
   })
 }
 
-function extractExifData(img: HTMLImageElement): { latitude: number | string; longitude: number | string } {
-  try {
+function extractExifData(img: HTMLImageElement): Promise<{ latitude: number | string; longitude: number | string }> {
+  return new Promise((resolve) => {
     if (!window.EXIF) {
       console.warn("Biblioteca EXIF.js não carregada")
-      return { latitude: "N/A", longitude: "N/A" }
+      resolve({ latitude: "N/A", longitude: "N/A" })
+      return
     }
 
-    // Método alternativo para extrair dados EXIF
-    let lat = "N/A"
-    let lng = "N/A"
-
-    // Usar uma abordagem mais segura
+    // Primeiro verificar se já existem dados EXIF no elemento
     if (img.exifdata) {
       const gpsData = extractGpsData(img.exifdata)
       if (gpsData.latitude !== "N/A" && gpsData.longitude !== "N/A") {
-        return gpsData
+        resolve(gpsData)
+        return
       }
     }
 
-    // Tentar extrair dados EXIF manualmente
+    // Extrair dados EXIF usando Promise (aguarda o callback assíncrono)
     window.EXIF.getData(img, function () {
-      const exifData = window.EXIF.getAllTags(this)
-      if (exifData && exifData.GPSLatitude && exifData.GPSLongitude) {
-        const latRef = exifData.GPSLatitudeRef || "N"
-        const lngRef = exifData.GPSLongitudeRef || "E"
+      try {
+        const exifData = window.EXIF.getAllTags(this)
+        if (exifData && exifData.GPSLatitude && exifData.GPSLongitude) {
+          const latRef = exifData.GPSLatitudeRef || "N"
+          const lngRef = exifData.GPSLongitudeRef || "E"
 
-        lat = convertDMSToDD(exifData.GPSLatitude, latRef === "S")
-        lng = convertDMSToDD(exifData.GPSLongitude, lngRef === "W")
+          const lat = convertDMSToDD(exifData.GPSLatitude, latRef === "S")
+          const lng = convertDMSToDD(exifData.GPSLongitude, lngRef === "W")
+
+          resolve({ latitude: lat, longitude: lng })
+        } else {
+          resolve({ latitude: "N/A", longitude: "N/A" })
+        }
+      } catch (error) {
+        console.error("Erro ao extrair EXIF:", error)
+        resolve({ latitude: "N/A", longitude: "N/A" })
       }
     })
-
-    return { latitude: lat, longitude: lng }
-  } catch (error) {
-    console.error("Erro ao extrair dados EXIF:", error)
-    return { latitude: "N/A", longitude: "N/A" }
-  }
+  })
 }
 
 function extractGpsData(exifdata: any): { latitude: number | string; longitude: number | string } {

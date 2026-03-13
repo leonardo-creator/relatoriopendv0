@@ -1,5 +1,6 @@
 import type { ImageMetadata } from "@/types/image-metadata"
 import { resizeImage } from "@/lib/image-utils"
+import { hasValidCoordinates, normalizeCoordinate } from "@/lib/coordinate-utils"
 
 export async function generateKML(imageMetadataList: ImageMetadata[]) {
   try {
@@ -29,10 +30,10 @@ export async function generateKML(imageMetadataList: ImageMetadata[]) {
     `
 
     for (const item of imageMetadataList) {
-      if (item.Latitude !== "N/A" && item.Longitude !== "N/A") {
-        const placemark = await createPlacemark(item)
-        kmlContent += placemark
-      }
+      if (!hasValidCoordinates(item)) continue
+
+      const placemark = await createPlacemark(item)
+      kmlContent += placemark
     }
 
     kmlContent += "</Document></kml>"
@@ -62,9 +63,9 @@ async function createPlacemark(item: ImageMetadata): Promise<string> {
       styleId = "pendente"
   }
 
-  // Garantir que as coordenadas sejam números
-  const lat = typeof item.Latitude === "string" ? Number.parseFloat(item.Latitude) : item.Latitude
-  const lon = typeof item.Longitude === "string" ? Number.parseFloat(item.Longitude) : item.Longitude
+  // Normalizar e converter coordenadas para números
+  const lat = Number(normalizeCoordinate(item.Latitude))
+  const lon = Number(normalizeCoordinate(item.Longitude))
 
   return `
     <Placemark>

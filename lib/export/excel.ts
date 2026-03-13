@@ -1,18 +1,19 @@
 import type { ImageMetadata } from "@/types/image-metadata"
 import { utils, write } from "xlsx"
 import { saveAs } from "file-saver"
+import { normalizeCoordinate } from "@/lib/coordinate-utils"
 
 export async function generateExcel(imageMetadataList: ImageMetadata[]) {
   try {
     // Formatar dados para o schema "Excel para Rotas"
     const excelData = imageMetadataList.map((item) => {
-      // Garantir que coordenadas sejam números decimais
-      const lat = typeof item.Latitude === "string" ? parseFloat(item.Latitude) : item.Latitude
-      const lng = typeof item.Longitude === "string" ? parseFloat(item.Longitude) : item.Longitude
+      // Normalizar coordenadas usando a função centralizada
+      const lat = normalizeCoordinate(item.Latitude)
+      const lng = normalizeCoordinate(item.Longitude)
 
       return {
-        Latitude: isNaN(lat) ? 0 : lat,
-        Longitude: isNaN(lng) ? 0 : lng,
+        Latitude: lat === "N/A" ? 0 : Number(lat),
+        Longitude: lng === "N/A" ? 0 : Number(lng),
         index: item.index,
         name: item.name,
         description: item.description,

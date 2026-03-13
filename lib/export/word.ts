@@ -1,5 +1,6 @@
 import type { ImageMetadata } from "@/types/image-metadata"
 import { calculateUTM } from "@/lib/coordinates"
+import { formatGPSCoordinates } from "@/lib/coordinate-utils"
 import { Document, Packer, Paragraph, Table, TableRow, TableCell, ImageRun, TextRun, WidthType, BorderStyle } from "docx"
 import { saveAs } from "file-saver"
 
@@ -63,7 +64,7 @@ export async function generateWord(imageMetadataList: ImageMetadata[]) {
               createMetadataParagraph("Status:", image.status),
               createMetadataParagraph("Detalhes:", image.description),
               createMetadataParagraph("Coordenadas UTM:", utmCoords),
-              createMetadataParagraph("GPS:", `${image.Latitude}, ${image.Longitude}`),
+              createMetadataParagraph("GPS:", formatGPSCoordinates(image.Latitude, image.Longitude)),
               createMetadataParagraph("Previsão:", image.predictionDate),
             ],
              borders: {

@@ -1,6 +1,7 @@
 import type { ImageMetadata } from "@/types/image-metadata"
 import { resizeImage } from "@/lib/image-utils"
 import { calculateUTM } from "@/lib/coordinates"
+import { formatGPSCoordinates } from "@/lib/coordinate-utils"
 
 /**
  * Gera um relatório em formato PDF que funciona em todas as plataformas
@@ -203,7 +204,7 @@ async function createHtmlReport(items: ImageMetadata[]): Promise<string> {
           </tr>
           <tr>
             <td>GPS:</td>
-            <td>${formatCoordinates(item.Latitude, item.Longitude)}</td>
+            <td>${formatGPSCoordinates(item.Latitude, item.Longitude)}</td>
           </tr>
           <tr>
             <td>Tamanho:</td>
@@ -301,21 +302,6 @@ function formatDate(dateString: string): string {
   }
 }
 
-/**
- * Formata coordenadas para exibição
- */
-function formatCoordinates(lat: number | string, lng: number | string): string {
-  if (lat === "N/A" || lng === "N/A") return "Não disponível"
-
-  try {
-    const latitude = typeof lat === "string" ? Number.parseFloat(lat) : lat
-    const longitude = typeof lng === "string" ? Number.parseFloat(lng) : lng
-
-    return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
-  } catch (e) {
-    return `${lat}, ${lng}`
-  }
-}
 
 /**
  * Formata uma data para uso em nome de arquivo
