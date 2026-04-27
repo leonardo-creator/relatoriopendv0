@@ -1,16 +1,9 @@
 import type { ImageMetadata } from "@/types/image-metadata"
-import { resizeImage } from "@/lib/image-utils"
 
 export async function generateJSON(imageMetadataList: ImageMetadata[]) {
-  // Redimensionar todas as imagens
-  const resizedData = await Promise.all(
-    imageMetadataList.map(async (item) => {
-      const resizedThumbnail = await resizeImage(item.thumbnail, 300, 200)
-      return { ...item, thumbnail: resizedThumbnail }
-    }),
-  )
-
-  const jsonString = JSON.stringify(resizedData, null, 2)
+  // Exporta os dados originais sem redimensionar as imagens,
+  // preservando a qualidade original do base64
+  const jsonString = JSON.stringify(imageMetadataList, null, 2)
   const blob = new Blob([jsonString], { type: "application/json" })
 
   const url = URL.createObjectURL(blob)
